@@ -15,12 +15,9 @@ const getValue = async () => {
 
 <template>
     <div>
-        <h2>
-            Tick-tek
-        </h2>
-
-        <router-link to="/test">Take me ot Test page. </router-link>
-
+        <h1>
+            Tick-tek Calculator
+        </h1>
         <button @click.prevent="getValue">Trigger Endpoint</button>
         <p v-if="response">{{ response.data }}</p>
     </div>
