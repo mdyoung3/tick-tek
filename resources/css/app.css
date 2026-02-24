@@ -8,13 +8,16 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, 'Cascadia Code', monospace;
 }
 
 @layer base {
-    h1 { @apply text-4xl font-bold tracking-tight text-white; }
-    h2 { @apply text-3xl font-semibold tracking-tight text-white; }
-    h3 { @apply text-2xl font-semibold text-slate-100; }
-    h4 { @apply text-xl font-medium text-slate-200; }
-    h5 { @apply text-lg font-medium text-slate-300; }
-    p  { @apply text-base text-slate-400 leading-relaxed; }
+    html { @apply bg-zinc-950; }
+    body { @apply bg-zinc-950 text-white antialiased; }
+    h1 { @apply text-4xl font-black tracking-tight text-white leading-none; }
+    h2 { @apply text-3xl font-black tracking-tight text-white; }
+    h3 { @apply text-xs font-bold tracking-[0.28em] uppercase text-zinc-500; }
+    h4 { @apply text-xl font-bold text-zinc-200; }
+    h5 { @apply text-lg font-medium text-zinc-300; }
+    p  { @apply text-sm text-zinc-500 leading-relaxed; }
 }

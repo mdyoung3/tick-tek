@@ -116,62 +116,91 @@ const handleClear = () => {
 </script>
 
 <template>
-    <div class="w-full max-w-sm mx-autobg-slate-800 rounded-2xl shadow-2xl p-6">
+    <div class="w-full bg-zinc-950 shadow-[0_32px_80px_rgba(0,0,0,0.9)] border border-white/[0.06]">
+
+        <!-- Gradient accent line at top -->
+        <div class="h-px bg-gradient-to-r from-cyan-500 via-cyan-400 to-violet-500"></div>
 
         <!-- Display Screen -->
-        <div class="bg-slate-950 rounded-xl p-4 mb-4 text-right">
-            <p class="text-slate-400 text-sm min-h-5">{{ expression }}</p>
-            <p class="text-white text-4xl font-mono font-bold truncate">{{ display }}</p>
+        <div class="px-7 pt-8 pb-7">
+            <p class="text-zinc-600 font-mono text-xs tracking-[0.25em] uppercase min-h-4">
+                {{ expression || '&nbsp;' }}
+            </p>
+            <p class="text-white font-mono text-6xl font-black tracking-tight mt-3 truncate leading-none">
+                {{ display }}
+            </p>
         </div>
 
-        <!-- Button Grid -->
-        <div class="grid grid-cols-4 gap-3">
+        <!-- Thin divider -->
+        <div class="h-px bg-white/[0.05] mx-7"></div>
 
-            <!-- Clear button spans full width -->
-            <button
-                @click="handleClear"
-                class="col-span-4 bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-xl transition"
-            >
-                C
-            </button>
+        <!-- Button Grid — gap-px creates hairline borders between buttons -->
+        <div class="p-5 pt-6">
+            <div class="grid grid-cols-4 gap-px bg-white/[0.05]">
 
-            <!-- Number buttons 7-9 and divide -->
-            <button @click="handleNumber(7)" class="calc-btn">7</button>
-            <button @click="handleNumber(8)" class="calc-btn">8</button>
-            <button @click="handleNumber(9)" class="calc-btn">9</button>
-            <button @click="handleOperator('/')" class="calc-btn-operator">/</button>
+                <!-- Clear — full width -->
+                <button
+                    @click="handleClear"
+                    class="calc-btn-clear col-span-4"
+                >
+                    CLR
+                </button>
 
-            <!-- Number buttons 4-6 and multiply -->
-            <button @click="handleNumber(4)" class="calc-btn">4</button>
-            <button @click="handleNumber(5)" class="calc-btn">5</button>
-            <button @click="handleNumber(6)" class="calc-btn">6</button>
-            <button @click="handleOperator('*')" class="calc-btn-operator">*</button>
+                <!-- Row 1: 7 8 9 ÷ -->
+                <button @click="handleNumber(7)" class="calc-btn-num">7</button>
+                <button @click="handleNumber(8)" class="calc-btn-num">8</button>
+                <button @click="handleNumber(9)" class="calc-btn-num">9</button>
+                <button @click="handleOperator('/')" class="calc-btn-op">÷</button>
 
-            <!-- Number buttons 1-3 and subtract -->
-            <button @click="handleNumber(1)" class="calc-btn">1</button>
-            <button @click="handleNumber(2)" class="calc-btn">2</button>
-            <button @click="handleNumber(3)" class="calc-btn">3</button>
-            <button @click="handleOperator('-')" class="calc-btn-operator">-</button>
+                <!-- Row 2: 4 5 6 × -->
+                <button @click="handleNumber(4)" class="calc-btn-num">4</button>
+                <button @click="handleNumber(5)" class="calc-btn-num">5</button>
+                <button @click="handleNumber(6)" class="calc-btn-num">6</button>
+                <button @click="handleOperator('*')" class="calc-btn-op">×</button>
 
-            <!-- Zero, decimal, equals and add -->
-            <button @click="handleNumber(0)" class="calc-btn">0</button>
-            <button @click="handleDecimal" class="calc-btn">.</button>
-            <button @click="handleEquals"
-                    class="col-span-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition">=
-            </button>
-            <button @click="handleOperator('+')" class="calc-btn-operator">+</button>
+                <!-- Row 3: 1 2 3 − -->
+                <button @click="handleNumber(1)" class="calc-btn-num">1</button>
+                <button @click="handleNumber(2)" class="calc-btn-num">2</button>
+                <button @click="handleNumber(3)" class="calc-btn-num">3</button>
+                <button @click="handleOperator('-')" class="calc-btn-op">−</button>
 
+                <!-- Row 4: 0 . = + -->
+                <button @click="handleNumber(0)" class="calc-btn-num">0</button>
+                <button @click="handleDecimal" class="calc-btn-num">.</button>
+                <button @click="handleEquals" class="calc-btn-eq">=</button>
+                <button @click="handleOperator('+')" class="calc-btn-op">+</button>
+
+            </div>
         </div>
+
     </div>
 </template>
 
 <style scoped>
 @reference "../../css/app.css";
-.calc-btn {
-    @apply bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-xl transition;
+
+.calc-btn-num {
+    @apply bg-zinc-950 hover:bg-zinc-800 active:bg-zinc-700
+           text-white font-mono text-2xl font-semibold
+           py-6 transition-colors duration-100 cursor-pointer;
 }
 
-.calc-btn-operator {
-    @apply bg-amber-500 hover:bg-amber-400 text-white font-bold py-3 rounded-xl transition;
+.calc-btn-op {
+    @apply bg-zinc-950 hover:bg-zinc-800 active:bg-cyan-950
+           text-cyan-400 font-mono text-2xl font-bold
+           py-6 transition-colors duration-100 cursor-pointer;
+}
+
+.calc-btn-clear {
+    @apply bg-zinc-950 hover:bg-zinc-900 active:bg-red-950
+           text-red-500 hover:text-red-400
+           font-bold tracking-[0.35em] text-xs uppercase
+           py-5 transition-colors duration-100 cursor-pointer;
+}
+
+.calc-btn-eq {
+    @apply bg-cyan-500 hover:bg-cyan-400 active:bg-cyan-300
+           text-zinc-950 font-mono text-2xl font-black
+           py-6 transition-colors duration-100 cursor-pointer;
 }
 </style>

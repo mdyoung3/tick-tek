@@ -76,19 +76,29 @@ const clearAllCalculations = async () => {
 </script>
 
 <template>
-    <main class="w-full max-w-md mx-auto">
-            <h1>
-                The Ticker Tape Calc-tek Calculator
-            </h1>
+    <main class="min-h-screen bg-zinc-950 py-14 px-4">
+        <div class="w-full max-w-sm mx-auto">
 
-        <!-- Calculator component emits 'calculated' with expression and result -->
-        <Calculator @calculated="saveCalculation" />
+            <!-- Page header -->
+            <div class="mb-10">
+                <p class="text-cyan-500 font-mono text-xs tracking-[0.3em] uppercase mb-3">CALC · 2026</p>
+                <h1 class="text-5xl font-black tracking-tighter leading-none text-white uppercase">
+                    Ticker<br>Tape
+                </h1>
+                <!-- Accent underline -->
+                <div class="mt-5 h-px bg-gradient-to-r from-cyan-500 via-cyan-400/40 to-transparent"></div>
+            </div>
 
-        <!-- TickerTape receives calculations as a prop and emits delete/clear events -->
-        <TickerTape
-            :calculations="calculations"
-            @delete="deleteCalculation"
-            @clear-all="clearAllCalculations"
-        />
+            <!-- Calculator component emits 'calculated' with expression and result -->
+            <Calculator @calculated="saveCalculation" />
+
+            <!-- TickerTape receives calculations as a prop and emits delete/clear events -->
+            <TickerTape
+                :calculations="calculations"
+                @delete="deleteCalculation"
+                @clear-all="clearAllCalculations"
+            />
+
+        </div>
     </main>
 </template>

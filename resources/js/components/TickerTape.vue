@@ -32,27 +32,35 @@ const handleClearAll = () => {
 </script>
 
 <template>
-    <div class="w-full max-w-sm mx-auto mt-6">
+    <div class="w-full mt-10">
 
-        <div class="flex items-center justify-between mb-4">
-            <h3>Ticker Tape</h3>
+        <!-- Section header -->
+        <div class="flex items-center justify-between mb-5 px-1">
+            <div class="flex items-center gap-3">
+                <!-- Cyan accent mark -->
+                <div class="w-px h-4 bg-cyan-500"></div>
+                <h3>History</h3>
+            </div>
             <button
                 v-if="calculations.length > 0"
                 @click="handleClearAll"
-                class="text-sm text-red-400 hover:text-red-300 transition"
+                class="text-xs text-zinc-700 hover:text-red-500 tracking-[0.2em] uppercase font-bold transition-colors duration-150"
             >
                 Clear All
             </button>
         </div>
 
+        <!-- Empty state -->
         <div
             v-if="calculations.length === 0"
-            class="text-center text-slate-500 py-8 bg-slate-800 rounded-2xl"
+            class="border border-dashed border-white/[0.07] py-14 text-center"
         >
-            <p>No calculations yet.</p>
-            <p class="text-sm mt-1">Start calculating above!</p>
+            <p class="text-zinc-700 text-xs tracking-[0.25em] uppercase">No calculations yet</p>
+            <p class="text-zinc-800 text-xs tracking-[0.15em] uppercase mt-2">Start calculating above</p>
         </div>
-        <div v-else class="flex flex-col gap-2">
+
+        <!-- Calculation list — gap-px creates thin separators -->
+        <div v-else class="flex flex-col gap-px bg-white/[0.04] border border-white/[0.06]">
             <CalculationBubble
                 v-for="calculation in calculations"
                 :key="calculation.id"
