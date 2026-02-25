@@ -1,59 +1,148 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Tick-Tek Calculator
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+An API-driven calculator web application with a persistent calculation history ("ticker tape"). Built with Laravel 12 and Vue 3 as part of a CalcTek interview exercise.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Basic arithmetic: addition, subtraction, multiplication, division
+- Division-by-zero error handling
+- Persistent calculation history stored in a database
+- Ticker tape display with timestamps for each calculation
+- Delete individual calculations or clear the entire history
+- WCAG 2.1 accessible — proper ARIA labels, contrast ratios, and keyboard navigation
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tech Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Layer | Technology |
+|-------|-----------|
+| Backend | Laravel 12, PHP 8.2 |
+| Database | SQLite (file-based) |
+| Frontend | Vue 3, Vue Router 4 |
+| Styling | Tailwind CSS 4 |
+| Build | Vite 7 |
+| HTTP Client | Axios |
 
-## Learning Laravel
+## Requirements
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+- PHP 8.2+
+- Composer
+- Node.js 18+ & npm
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Installation
 
-## Laravel Sponsors
+```bash
+# Clone the repository and enter the project directory
+git clone <repo-url> tick-tek
+cd tick-tek
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# Install PHP and JavaScript dependencies
+composer install
+npm install
 
-### Premium Partners
+# Configure environment
+cp .env.example .env
+php artisan key:generate
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+# Create and migrate the database
+touch database/database.sqlite
+php artisan migrate
+```
 
-## Contributing
+## Running the Application
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+# Start all dev services (Laravel, Vite, queue listener, log watcher)
+composer run dev
+```
 
-## Code of Conduct
+This starts:
+- PHP development server on `http://localhost:8000`
+- Vite dev server on `http://localhost:5173` (HMR)
+- Queue listener
+- Log watcher (Pail)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+For a production build:
 
-## Security Vulnerabilities
+```bash
+npm run build
+php artisan serve
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## API Endpoints
 
-## License
+All endpoints are prefixed with `/api`.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/calculations` | List all calculations (newest first) |
+| `POST` | `/api/calculations` | Save a new calculation |
+| `DELETE` | `/api/calculations/{id}` | Delete a single calculation |
+| `DELETE` | `/api/calculations` | Delete all calculations |
+
+### Example Request
+
+```json
+POST /api/calculations
+{
+    "expression": "9 + 3",
+    "result": 12
+}
+```
+
+### Example Response
+
+```json
+{
+    "id": 1,
+    "expression": "9 + 3",
+    "result": 12,
+    "created_at": "2026-02-24T12:30:45.000000Z",
+    "updated_at": "2026-02-24T12:30:45.000000Z"
+}
+```
+
+## Project Structure
+
+```
+├── app/
+│   ├── Http/Controllers/CalculationController.php
+│   └── Models/Calculations.php
+├── resources/js/
+│   ├── App.vue                   # Root component, manages API calls and state
+│   ├── components/
+│   │   ├── Calculator.vue        # Calculator UI and logic
+│   │   ├── TickerTape.vue        # Calculation history list
+│   │   └── CalculationBubble.vue # Individual history entry
+│   └── Pages/
+│       └── HomeRoute.vue         # Home route
+├── routes/
+│   ├── api.php                   # API routes
+│   └── web.php                   # Catch-all for Vue Router
+└── database/
+    └── migrations/               # Database schema
+```
+
+## Component Overview
+
+- **App.vue** — Orchestrates data fetching and event handling between child components
+- **Calculator.vue** — Handles user input, evaluates expressions, emits results
+- **TickerTape.vue** — Displays the full calculation history; emits delete events
+- **CalculationBubble.vue** — Renders a single calculation entry with a timestamp and delete button
+
+## Database Schema
+
+```sql
+CREATE TABLE calculations (
+    id          BIGINT PRIMARY KEY,
+    expression  VARCHAR(255) NOT NULL,
+    result      DECIMAL(15, 8) NOT NULL,
+    created_at  TIMESTAMP,
+    updated_at  TIMESTAMP
+);
+```
+
+## Running Tests
+
+```bash
+php artisan test
+```

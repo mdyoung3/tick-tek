@@ -1,5 +1,4 @@
 <script setup>
-// Receive calculations array from App.vue
 import CalculationBubble from "./CalculationBubble.vue";
 
 const props = defineProps({
@@ -9,42 +8,50 @@ const props = defineProps({
     },
 });
 
-
-// Emit delete and clear-all events up to App.vue
 const emit = defineEmits(["delete", "clear-all"]);
 
-/**
- * Emit the delete event with the calculation ID up to App.vue.
- * App.vue will handle the actual API call.
- */
 const handleDelete = (id) => {
     emit("delete", id);
 };
 
-/**
- * Emit the clear-all event up to App.vue.
- * App.vue will handle deleting all calculations from the API.
- */
 const handleClearAll = () => {
     emit("clear-all");
 };
-
 </script>
 
 <template>
-    <div class="w-full mt-10">
+    <!--
+        section landmark with aria-label = named region for screen reader navigation.
+        (WCAG 1.3.1, 2.4.1)
+    -->
+    <section aria-label="Calculation history" class="w-full mt-10">
 
         <!-- Section header -->
         <div class="flex items-center justify-between mb-5 px-1">
             <div class="flex items-center gap-3">
-                <!-- Cyan accent mark -->
-                <div class="w-px h-4 bg-cyan-500"></div>
-                <h3>History</h3>
+                <div class="w-px h-4 bg-cyan-500" aria-hidden="true"></div>
+                <!--
+                    Changed from h3 to h2: the page h1 is "Ticker Tape" in App.vue,
+                    so this section heading is correctly at the second level.
+                    Heading levels must not skip (WCAG 1.3.1).
+                    Visual style matches the former h3 treatment via explicit classes.
+                    zinc-400 on zinc-950 = 7.38:1 ✓ (WCAG 1.4.3)
+                -->
+                <h2 class="text-xs font-bold tracking-[0.28em] uppercase text-zinc-400">History</h2>
             </div>
+
+            <!--
+                aria-label="Clear all calculations" gives screen reader users a full
+                description. type="button" prevents accidental form submission.
+                zinc-400 default (7.38:1 ✓), red-500 hover (4.86:1 ✓) — WCAG 1.4.3
+                (was zinc-700 = 1.41:1, FAIL)
+            -->
             <button
                 v-if="calculations.length > 0"
+                type="button"
                 @click="handleClearAll"
-                class="text-xs text-zinc-700 hover:text-red-500 tracking-[0.2em] uppercase font-bold transition-colors duration-150"
+                aria-label="Clear all calculations"
+                class="text-xs text-zinc-400 hover:text-red-500 tracking-[0.2em] uppercase font-bold transition-colors duration-150"
             >
                 Clear All
             </button>
@@ -54,20 +61,35 @@ const handleClearAll = () => {
         <div
             v-if="calculations.length === 0"
             class="border border-dashed border-white/[0.07] py-14 text-center"
+            role="status"
+            aria-label="No calculations yet"
         >
-            <p class="text-zinc-700 text-xs tracking-[0.25em] uppercase">No calculations yet</p>
-            <p class="text-zinc-800 text-xs tracking-[0.15em] uppercase mt-2">Start calculating above</p>
+            <!--
+                zinc-400 on zinc-950 = 7.38:1 ✓ — WCAG 1.4.3
+                (was zinc-700 = 1.41:1 and zinc-800 = 1.14:1, both FAIL)
+            -->
+            <p class="text-zinc-400 text-xs tracking-[0.25em] uppercase">No calculations yet</p>
+            <p class="text-zinc-400 text-xs tracking-[0.15em] uppercase mt-2">Start calculating above</p>
         </div>
 
-        <!-- Calculation list — gap-px creates thin separators -->
-        <div v-else class="flex flex-col gap-px bg-white/[0.04] border border-white/[0.06]">
-            <CalculationBubble
-                v-for="calculation in calculations"
-                :key="calculation.id"
-                :calculation="calculation"
-                @delete="handleDelete"
-            />
-        </div>
+        <!--
+            WCAG 1.3.1 fix: changed from <div> to <ul> so screen readers announce
+            "list, N items" — giving users immediate context about the content structure.
+            list-none removes browser default bullet/padding on the ul element.
+            Each <li> wraps a CalculationBubble; its implicit listitem role is correct.
+        -->
+        <ul
+            v-else
+            class="list-none m-0 p-0 flex flex-col gap-px bg-white/[0.04] border border-white/[0.06]"
+            aria-label="Calculation list"
+        >
+            <li v-for="calculation in calculations" :key="calculation.id">
+                <CalculationBubble
+                    :calculation="calculation"
+                    @delete="handleDelete"
+                />
+            </li>
+        </ul>
 
-    </div>
+    </section>
 </template>
