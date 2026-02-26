@@ -12,25 +12,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@v4
         with:
           php-version: 8.3
-
-      - name: Install dependencies
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
-
-      - name: Set up Laravel environment
-        run: cp .env.testing .env && php artisan key:generate
-
-      - name: Run Pest tests
-        run: ./vendor/bin/pest --env=testing
-
-      - name: Get Composer cache directory
-        id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
 
       - name: Cache dependencies
         uses: actions/cache@v2
@@ -39,3 +26,16 @@ jobs:
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
+
+      - name: Install dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Set up Laravel environment
+        run: cp .env.testing .env
+
+      - name: Run Pest tests
+        run: ./vendor/bin/pest --env=testing
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
