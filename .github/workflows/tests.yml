@@ -34,7 +34,7 @@ jobs:
         run: cp .env.testing .env
 
       - name: Run Pest tests
-        run: ./vendor/bin/pest --env=testing
+        run: ./vendor/bin/pest
 
       - name: Get Composer cache directory
         id: composer-cache
