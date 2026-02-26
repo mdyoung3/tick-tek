@@ -114,7 +114,7 @@ const handleClear = () => {
         section landmark with aria-label gives screen reader users a named region
         they can jump to directly (WCAG 1.3.1, 2.4.1)
     -->
-    <section aria-label="Calculator" class="w-full bg-zinc-950 shadow-[0_32px_80px_rgba(0,0,0,0.9)] border border-white/[0.06]">
+    <section aria-label="Calculator" class="w-full bg-zinc-950 shadow-[0_32px_80px_rgba(0,0,0,0.9)] border border-white/[0.15]">
 
         <!-- Gradient accent line (decorative) -->
         <div class="h-px bg-gradient-to-r from-cyan-500 via-cyan-400 to-violet-500" aria-hidden="true"></div>
@@ -141,11 +141,11 @@ const handleClear = () => {
             </p>
         </div>
 
-        <div class="h-px bg-white/[0.05] mx-7" aria-hidden="true"></div>
+        <div class="h-px bg-white/[0.12] mx-7" aria-hidden="true"></div>
 
         <!-- Button grid — gap-px creates hairline separators -->
         <div class="p-5 pt-6">
-            <div class="grid grid-cols-4 gap-px bg-white/[0.05]" role="group" aria-label="Calculator buttons">
+            <div class="grid grid-cols-4 gap-px bg-white/[0.1]" role="group" aria-label="Calculator buttons">
 
                 <!--
                     All buttons have type="button" to prevent form submission side-effects.
@@ -227,10 +227,11 @@ const handleClear = () => {
 }
 
 .calc-btn-clear {
-    @apply bg-zinc-950 hover:bg-zinc-900 active:bg-red-950
+    @apply bg-zinc-950 hover:bg-zinc-800 active:bg-red-950
            text-red-500 hover:text-red-400
            font-bold tracking-[0.35em] text-xs uppercase
            py-5 transition-colors duration-100 cursor-pointer
+           border border-red-900 hover:border-red-700
            relative focus-visible:z-10;
 }
 

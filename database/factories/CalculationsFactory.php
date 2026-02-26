@@ -1,0 +1,28 @@
+<?php
+
+namespace Database\Factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Calculations>
+ */
+class CalculationsFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        $a = fake()->numberBetween(1, 100);
+        $b = fake()->numberBetween(1, 100);
+        $result = $a + $b;
+
+        return [
+            'expression' => "{$a} + {$b} = {$result}",
+            'result' => $result,
+        ];
+    }
+}
