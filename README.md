@@ -1,4 +1,4 @@
-# Tick-Tek Calculator
+# tapecalc
 
 An API-driven calculator web application with a persistent calculation history ("ticker tape"). Built with Laravel 12 and Vue 3 as part of a CalcTek interview exercise.
 
@@ -13,27 +13,27 @@ An API-driven calculator web application with a persistent calculation history (
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Backend | Laravel 12, PHP 8.2 |
+| Layer | Technology          |
+|-------|---------------------|
+| Backend | Laravel 12, PHP 8.3 |
 | Database | SQLite (file-based) |
 | Frontend | Vue 3, Vue Router 4 |
-| Styling | Tailwind CSS 4 |
-| Build | Vite 7 |
-| HTTP Client | Axios |
+| Styling | Tailwind CSS 4      |
+| Build | Vite 7              |
+| HTTP Client | Axios               |
 
 ## Requirements
 
-- PHP 8.2+
-- Composer
-- Node.js 18+ & npm
+- PHP 8.3+
+- Composer 2
+- Node.js 22+ & yarn
 
 ## Installation
 
 ```bash
 # Clone the repository and enter the project directory
-git clone <repo-url> tick-tek
-cd tick-tek
+git clone <repo-url> tapecalc
+cd tapecalc
 
 # Install PHP and JavaScript dependencies
 composer install
@@ -64,7 +64,7 @@ This starts:
 For a production build:
 
 ```bash
-npm run build
+yarn build
 php artisan serve
 ```
 
@@ -129,20 +129,33 @@ POST /api/calculations
 - **TickerTape.vue** — Displays the full calculation history; emits delete events
 - **CalculationBubble.vue** — Renders a single calculation entry with a timestamp and delete button
 
-## Database Schema
+## Testing
 
-```sql
-CREATE TABLE calculations (
-    id          BIGINT PRIMARY KEY,
-    expression  VARCHAR(255) NOT NULL,
-    result      DECIMAL(15, 8) NOT NULL,
-    created_at  TIMESTAMP,
-    updated_at  TIMESTAMP
-);
-```
+This project uses [Pest](https://pestphp.com/) for feature testing, with an in-memory SQLite database so no additional database setup is required.
 
-## Running Tests
-
+### Running Tests
 ```bash
 php artisan test
 ```
+
+Or directly via Pest:
+```bash
+./vendor/bin/pest
+```
+
+### Test Coverage
+
+The test suite covers all four API endpoints:
+
+| Test | Description |
+|------|-------------|
+| `can fetch all calculations` | Asserts the index endpoint returns a 200 and the correct number of records |
+| `can store a calculation` | Asserts a new calculation is saved and returns a 201 |
+| `can delete a calculation` | Asserts a single record is removed and returns a 204 |
+| `can clear all calculations` | Asserts all records are removed and returns a 204 |
+
+### Continuous Integration
+
+Tests run automatically via GitHub Actions on every push and pull request to `main`. The workflow installs dependencies, configures the environment, and runs the full test suite against an in-memory SQLite database.
+
+You can view the latest test results in the [Actions tab](../../actions) of this repository.

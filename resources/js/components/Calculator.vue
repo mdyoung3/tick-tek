@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from "vue";
 
+import { evaluate } from 'mathjs'
+
 const display = ref("0");
 const expression = ref("");
 const firstNumber = ref(null);
@@ -8,7 +10,6 @@ const operator = ref(null);
 const hasDecimal = ref(false);
 
 // Spoken announcement for screen readers — only updated on completed calculations
-// (WCAG 4.1.3: status messages must be programmatically exposed)
 const announcement = ref("");
 
 const emit = defineEmits(["calculated"]);
@@ -37,64 +38,50 @@ const handleDecimal = () => {
     }
 };
 
-/**
- * Handle operator button presses (+, -, *, /).
- * Stores the first number and selected operator,
- * then clears the display for the second number input.
- */
+
 const handleOperator = (op) => {
-    firstNumber.value = parseFloat(display.value);
-    operator.value = op;
-    hasDecimal.value = false;
+    expression.value += display.value + op;
     display.value = "0";
-};
-
-/**
- * Handle the equals button press.
- * Performs the calculation based on the stored operator,
- * updates the display with the result, builds the expression
- * string, and emits the 'calculated' event up to App.vue.
- */
-const handleEquals = () => {
-    if (firstNumber.value === null || operator.value === null) return;
-
-    const secondNumber = parseFloat(display.value);
-    let result = null;
-
-    switch (operator.value) {
-        case "+":
-            result = firstNumber.value + secondNumber;
-            break;
-        case "-":
-            result = firstNumber.value - secondNumber;
-            break;
-        case "*":
-            result = firstNumber.value * secondNumber;
-            break;
-        case "/":
-            if (secondNumber === 0) {
-                display.value = "Error";
-                // Announce error to screen readers (WCAG 4.1.3)
-                announcement.value = "Error: cannot divide by zero";
-                return;
-            }
-            result = firstNumber.value / secondNumber;
-            break;
-    }
-
-    const fullExpression = `${firstNumber.value} ${operator.value} ${secondNumber} = ${result}`;
-    expression.value = fullExpression;
-    display.value = String(result);
-
-    // Announce the completed calculation to screen readers (WCAG 4.1.3)
-    announcement.value = fullExpression;
-
-    emit("calculated", fullExpression, result);
-
-    firstNumber.value = null;
-    operator.value = null;
     hasDecimal.value = false;
 };
+
+const handleOpenParen = () => {
+    // If display has a real number, treat it as implicit multiplication: 9( → 9*(
+    if (display.value !== "0") {
+        expression.value += display.value + "*(";
+    } else {
+        expression.value += "(";
+    }
+    display.value = "0";
+    hasDecimal.value = false;
+};
+
+const handleCloseParen = () => {
+    expression.value += display.value + ")";
+    display.value = "0";
+    hasDecimal.value = false;
+};
+
+const handleSqrt = () => {
+    expression.value += "sqrt(";
+    // don't flush display — user types the number inside sqrt() next
+};
+
+
+function handleEquals() {
+    const fullExpression = expression.value + display.value; // "9*9"
+    try {
+        const result = evaluate(fullExpression);
+        announcement.value = `${fullExpression} equals ${result}`;
+        display.value = String(result);
+        emit('calculated', fullExpression, result);
+        expression.value = "";  // reset for next calculation
+        hasDecimal.value = false;
+    } catch (e) {
+        display.value = 'Error';
+        announcement.value = 'Error';
+    }
+}
 
 /**
  * Clear the calculator and reset all state back to defaults.
@@ -102,29 +89,17 @@ const handleEquals = () => {
 const handleClear = () => {
     display.value = "0";
     expression.value = "";
-    firstNumber.value = null;
-    operator.value = null;
     hasDecimal.value = false;
     announcement.value = "";
 };
 </script>
 
 <template>
-    <!--
-        section landmark with aria-label gives screen reader users a named region
-        they can jump to directly (WCAG 1.3.1, 2.4.1)
-    -->
     <section aria-label="Calculator" class="w-full bg-zinc-950 shadow-[0_32px_80px_rgba(0,0,0,0.9)] border border-white/[0.15]">
 
         <!-- Gradient accent line (decorative) -->
         <div class="h-px bg-gradient-to-r from-cyan-500 via-cyan-400 to-violet-500" aria-hidden="true"></div>
 
-        <!--
-            aria-live="polite" + aria-atomic="true": announces completed calculations
-            and error states to screen readers without interrupting ongoing speech.
-            Kept in a visually hidden element so the display div itself doesn't
-            re-announce on every digit press. (WCAG 4.1.3)
-        -->
         <p class="sr-only" aria-live="polite" aria-atomic="true">{{ announcement }}</p>
 
         <!-- Display area — labelled region, not a live region itself -->
@@ -147,11 +122,6 @@ const handleClear = () => {
         <div class="p-5 pt-6">
             <div class="grid grid-cols-4 gap-px bg-white/[0.1]" role="group" aria-label="Calculator buttons">
 
-                <!--
-                    All buttons have type="button" to prevent form submission side-effects.
-                    Accessible names satisfy WCAG 4.1.2 (Name, Role, Value).
-                    WCAG 2.5.3 (Label in Name): abbreviation "CLR" is present in aria-label.
-                -->
                 <button
                     type="button"
                     @click="handleClear"
@@ -165,10 +135,6 @@ const handleClear = () => {
                 <button type="button" @click="handleNumber(7)" class="calc-btn-num">7</button>
                 <button type="button" @click="handleNumber(8)" class="calc-btn-num">8</button>
                 <button type="button" @click="handleNumber(9)" class="calc-btn-num">9</button>
-                <!--
-                    Symbolic characters (÷ × − +) are exempt from WCAG 2.5.3 per the
-                    spec note: "Symbolic text characters... do not need to follow this rule."
-                -->
                 <button type="button" @click="handleOperator('/')" class="calc-btn-op" aria-label="Divide">÷</button>
 
                 <!-- Row 2 -->
@@ -191,6 +157,12 @@ const handleClear = () => {
                 </button>
                 <button type="button" @click="handleOperator('+')" class="calc-btn-op" aria-label="Add">+</button>
 
+                <!-- Function row -->
+                <button type="button" @click="handleOpenParen" class="calc-btn-op" aria-label="Open parenthesis">(</button>
+                <button type="button" @click="handleCloseParen" class="calc-btn-op" aria-label="Close parenthesis">)</button>
+                <button type="button" @click="handleOperator('^')" class="calc-btn-op" aria-label="Power">^</button>
+                <button type="button" @click="handleSqrt" class="calc-btn-op" aria-label="Square root">√</button>
+
             </div>
         </div>
 
@@ -200,17 +172,6 @@ const handleClear = () => {
 <style scoped>
 @reference "../../css/app.css";
 
-/*
- * All button classes include focus-visible: z-10 + relative so the
- * global focus ring (defined in app.css) is not clipped by adjacent
- * buttons in the gap-px grid. (WCAG 2.4.7)
- *
- * Contrast checks against bg-zinc-950 (#09090b, L≈0.006):
- *   text-white:    ~18:1  ✓
- *   text-cyan-400: ~11:1  ✓
- *   text-red-500:   ~4.9:1 ✓
- *   text-zinc-950 on bg-cyan-500: ~8.1:1 ✓
- */
 
 .calc-btn-num {
     @apply bg-zinc-950 hover:bg-zinc-800 active:bg-zinc-700

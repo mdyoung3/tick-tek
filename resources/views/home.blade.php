@@ -6,6 +6,11 @@
 
     <title>{{ config('app.name', 'Tick-tek') }}</title>
 
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+
+    <link rel="icon" type="image/png" href="{{ asset('images/favicon.png') }}">
+
+
     @vite(['resources/js/app.js', 'resources/css/app.css'])
 </head>
 <body class="font-sans bg-zinc-950 min-h-screen">
