@@ -4,7 +4,6 @@ import axios from "axios";
 import Calculator from "./components/Calculator.vue";
 import TickerTape from "./components/TickerTape.vue";
 
-// Holds the list of all calculations fetched from the database
 const calculations = ref([]);
 
 /**
@@ -79,20 +78,16 @@ const clearAllCalculations = async () => {
     <main class="min-h-screen bg-zinc-950 py-14 px-4">
         <div class="w-full max-w-sm mx-auto">
 
-            <!-- Page header -->
             <div class="mb-10">
                 <p class="text-cyan-500 font-mono text-xs tracking-[0.3em] uppercase mb-3">CALC · 2026</p>
                 <h1 class="text-5xl font-black tracking-tighter leading-none text-white uppercase">
-                    Ticker<br>Tape
+                    Tape Calc
                 </h1>
-                <!-- Accent underline -->
                 <div class="mt-5 h-px bg-gradient-to-r from-cyan-500 via-cyan-400/40 to-transparent"></div>
             </div>
 
-            <!-- Calculator component emits 'calculated' with expression and result -->
             <Calculator @calculated="saveCalculation" />
 
-            <!-- TickerTape receives calculations as a prop and emits delete/clear events -->
             <TickerTape
                 :calculations="calculations"
                 @delete="deleteCalculation"
