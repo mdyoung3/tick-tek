@@ -1,4 +1,4 @@
-# tapecalc
+# Tapecalc
 
 An API-driven calculator web application with a persistent calculation history ("ticker tape"). Built with Laravel 12 and Vue 3 as part of a CalcTek interview exercise.
 
