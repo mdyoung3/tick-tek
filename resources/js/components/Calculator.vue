@@ -46,6 +46,28 @@ const handleOperator = (op) => {
     hasDecimal.value = false;
 };
 
+const handleOpenParen = () => {
+    // If display has a real number, treat it as implicit multiplication: 9( → 9*(
+    if (display.value !== "0") {
+        expression.value += display.value + "*(";
+    } else {
+        expression.value += "(";
+    }
+    display.value = "0";
+    hasDecimal.value = false;
+};
+
+const handleCloseParen = () => {
+    expression.value += display.value + ")";
+    display.value = "0";
+    hasDecimal.value = false;
+};
+
+const handleSqrt = () => {
+    expression.value += "sqrt(";
+    // don't flush display — user types the number inside sqrt() next
+};
+
 
 function handleEquals() {
     const fullExpression = expression.value + display.value; // "9*9"
@@ -154,6 +176,12 @@ const handleClear = () => {
                     =
                 </button>
                 <button type="button" @click="handleOperator('+')" class="calc-btn-op" aria-label="Add">+</button>
+
+                <!-- Function row -->
+                <button type="button" @click="handleOpenParen" class="calc-btn-op" aria-label="Open parenthesis">(</button>
+                <button type="button" @click="handleCloseParen" class="calc-btn-op" aria-label="Close parenthesis">)</button>
+                <button type="button" @click="handleOperator('^')" class="calc-btn-op" aria-label="Power">^</button>
+                <button type="button" @click="handleSqrt" class="calc-btn-op" aria-label="Square root">√</button>
 
             </div>
         </div>
