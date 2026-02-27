@@ -10,7 +10,6 @@ const operator = ref(null);
 const hasDecimal = ref(false);
 
 // Spoken announcement for screen readers — only updated on completed calculations
-// (WCAG 4.1.3: status messages must be programmatically exposed)
 const announcement = ref("");
 
 const emit = defineEmits(["calculated"]);
@@ -96,21 +95,11 @@ const handleClear = () => {
 </script>
 
 <template>
-    <!--
-        section landmark with aria-label gives screen reader users a named region
-        they can jump to directly (WCAG 1.3.1, 2.4.1)
-    -->
     <section aria-label="Calculator" class="w-full bg-zinc-950 shadow-[0_32px_80px_rgba(0,0,0,0.9)] border border-white/[0.15]">
 
         <!-- Gradient accent line (decorative) -->
         <div class="h-px bg-gradient-to-r from-cyan-500 via-cyan-400 to-violet-500" aria-hidden="true"></div>
 
-        <!--
-            aria-live="polite" + aria-atomic="true": announces completed calculations
-            and error states to screen readers without interrupting ongoing speech.
-            Kept in a visually hidden element so the display div itself doesn't
-            re-announce on every digit press. (WCAG 4.1.3)
-        -->
         <p class="sr-only" aria-live="polite" aria-atomic="true">{{ announcement }}</p>
 
         <!-- Display area — labelled region, not a live region itself -->
@@ -133,11 +122,6 @@ const handleClear = () => {
         <div class="p-5 pt-6">
             <div class="grid grid-cols-4 gap-px bg-white/[0.1]" role="group" aria-label="Calculator buttons">
 
-                <!--
-                    All buttons have type="button" to prevent form submission side-effects.
-                    Accessible names satisfy WCAG 4.1.2 (Name, Role, Value).
-                    WCAG 2.5.3 (Label in Name): abbreviation "CLR" is present in aria-label.
-                -->
                 <button
                     type="button"
                     @click="handleClear"
@@ -151,10 +135,6 @@ const handleClear = () => {
                 <button type="button" @click="handleNumber(7)" class="calc-btn-num">7</button>
                 <button type="button" @click="handleNumber(8)" class="calc-btn-num">8</button>
                 <button type="button" @click="handleNumber(9)" class="calc-btn-num">9</button>
-                <!--
-                    Symbolic characters (÷ × − +) are exempt from WCAG 2.5.3 per the
-                    spec note: "Symbolic text characters... do not need to follow this rule."
-                -->
                 <button type="button" @click="handleOperator('/')" class="calc-btn-op" aria-label="Divide">÷</button>
 
                 <!-- Row 2 -->
@@ -192,17 +172,6 @@ const handleClear = () => {
 <style scoped>
 @reference "../../css/app.css";
 
-/*
- * All button classes include focus-visible: z-10 + relative so the
- * global focus ring (defined in app.css) is not clipped by adjacent
- * buttons in the gap-px grid. (WCAG 2.4.7)
- *
- * Contrast checks against bg-zinc-950 (#09090b, L≈0.006):
- *   text-white:    ~18:1  ✓
- *   text-cyan-400: ~11:1  ✓
- *   text-red-500:   ~4.9:1 ✓
- *   text-zinc-950 on bg-cyan-500: ~8.1:1 ✓
- */
 
 .calc-btn-num {
     @apply bg-zinc-950 hover:bg-zinc-800 active:bg-zinc-700

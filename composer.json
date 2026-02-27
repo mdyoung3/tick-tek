@@ -1,9 +1,9 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "tapecalc/tapecalc",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "description": "An API-driven calculator with a persistent ticker-tape history.",
+    "keywords": ["laravel", "vue", "calculator"],
     "license": "MIT",
     "require": {
         "php": "^8.2",

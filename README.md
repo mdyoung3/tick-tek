@@ -1,4 +1,4 @@
-# Tick-Tek Calculator
+# tapecalc
 
 An API-driven calculator web application with a persistent calculation history ("ticker tape"). Built with Laravel 12 and Vue 3 as part of a CalcTek interview exercise.
 
@@ -32,8 +32,8 @@ An API-driven calculator web application with a persistent calculation history (
 
 ```bash
 # Clone the repository and enter the project directory
-git clone <repo-url> tick-tek
-cd tick-tek
+git clone <repo-url> tapecalc
+cd tapecalc
 
 # Install PHP and JavaScript dependencies
 composer install
