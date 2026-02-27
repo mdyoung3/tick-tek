@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from "vue";
 
+import { evaluate } from 'mathjs'
+
 const display = ref("0");
 const expression = ref("");
 const firstNumber = ref(null);
@@ -37,64 +39,28 @@ const handleDecimal = () => {
     }
 };
 
-/**
- * Handle operator button presses (+, -, *, /).
- * Stores the first number and selected operator,
- * then clears the display for the second number input.
- */
+
 const handleOperator = (op) => {
-    firstNumber.value = parseFloat(display.value);
-    operator.value = op;
-    hasDecimal.value = false;
+    expression.value += display.value + op;
     display.value = "0";
-};
-
-/**
- * Handle the equals button press.
- * Performs the calculation based on the stored operator,
- * updates the display with the result, builds the expression
- * string, and emits the 'calculated' event up to App.vue.
- */
-const handleEquals = () => {
-    if (firstNumber.value === null || operator.value === null) return;
-
-    const secondNumber = parseFloat(display.value);
-    let result = null;
-
-    switch (operator.value) {
-        case "+":
-            result = firstNumber.value + secondNumber;
-            break;
-        case "-":
-            result = firstNumber.value - secondNumber;
-            break;
-        case "*":
-            result = firstNumber.value * secondNumber;
-            break;
-        case "/":
-            if (secondNumber === 0) {
-                display.value = "Error";
-                // Announce error to screen readers (WCAG 4.1.3)
-                announcement.value = "Error: cannot divide by zero";
-                return;
-            }
-            result = firstNumber.value / secondNumber;
-            break;
-    }
-
-    const fullExpression = `${firstNumber.value} ${operator.value} ${secondNumber} = ${result}`;
-    expression.value = fullExpression;
-    display.value = String(result);
-
-    // Announce the completed calculation to screen readers (WCAG 4.1.3)
-    announcement.value = fullExpression;
-
-    emit("calculated", fullExpression, result);
-
-    firstNumber.value = null;
-    operator.value = null;
     hasDecimal.value = false;
 };
+
+
+function handleEquals() {
+    const fullExpression = expression.value + display.value; // "9*9"
+    try {
+        const result = evaluate(fullExpression);
+        announcement.value = `${fullExpression} equals ${result}`;
+        display.value = String(result);
+        emit('calculated', fullExpression, result);
+        expression.value = "";  // reset for next calculation
+        hasDecimal.value = false;
+    } catch (e) {
+        display.value = 'Error';
+        announcement.value = 'Error';
+    }
+}
 
 /**
  * Clear the calculator and reset all state back to defaults.
@@ -102,8 +68,6 @@ const handleEquals = () => {
 const handleClear = () => {
     display.value = "0";
     expression.value = "";
-    firstNumber.value = null;
-    operator.value = null;
     hasDecimal.value = false;
     announcement.value = "";
 };
