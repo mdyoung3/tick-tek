@@ -5,6 +5,7 @@ An API-driven calculator web application with a persistent calculation history (
 ## Features
 
 - Basic arithmetic: addition, subtraction, multiplication, division
+- Other: square root, square, and parens
 - Division-by-zero error handling
 - Persistent calculation history stored in a database
 - Ticker tape display with timestamps for each calculation
